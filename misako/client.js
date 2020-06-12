@@ -9,6 +9,8 @@ class Misako extends Discord.Client {
         if (!options.prefix) { this.prefix = defaultPrefix; };
         //--
         this.commands = new Discord.Collection();
+        this.commandObjects = new Discord.Collection();
+        this.types = new Discord.Collection();
         this._prefix = null;
     };
 
@@ -22,17 +24,9 @@ class Misako extends Discord.Client {
 
     /*/--
 
-        Testing Functions
+        Validate Functions
 
     --/*/
-
-    parseMessage(msg) {
-        if (!msg.charAt(0) == this.prefix) { return; };
-        let args = msg.slice(1).split(' ');
-        let command = args.shift();
-        //--
-        
-    };
 
     validate(value, type) {
         if (type == 'array') {
@@ -51,8 +45,8 @@ class Misako extends Discord.Client {
         if (this.validate(command,'function')) { command = command.name; };
         if (!this.validate(command,'string')) {
             throw new TypeError('Command must be a function or string.'); };
-        return this.commands.find(_command => _command.name == command) ||
-        this.commands.find(_command => _command.aliases.includes(command));
+        return this.commandObjects.find(_command => _command.name == command) ||
+        this.commandObjects.find(_command => _command.aliases.includes(command));
     };
 
     fetchCommandPath(command) {
@@ -69,7 +63,8 @@ class Misako extends Discord.Client {
         };
         //--
         _command.path = this.fetchCommandPath(_command);
-        return this.commands.set(_command.name,_command);
+        this.commands.set(_command.name,command);
+        this.commandObjects.set(_command.name,_command);
     };
 
     registerCommands(commands) {
@@ -89,8 +84,8 @@ class Misako extends Discord.Client {
         let commands = [];
         for (const group of Object.values(folder)) {
             for (const command of Object.values(group)) {
-                if (typeof Command == 'function' || command instanceof Command) {
-                    console.log(command);
+                if (typeof command == 'function' || command instanceof Command) {
+                    commands.push(command);
                 } else {
                     console.log(`Tried to push invalid command.`);
                 };
@@ -99,13 +94,80 @@ class Misako extends Discord.Client {
         return commands;
     };
 
+    /*/-- 
+
+        Type Commands
+
+    --/*/
+
+    registerTypes() {
+        const typePath = path.join(__dirname,'types');
+        const folder = require('require-all')(typePath);
+        if (!this.validate(folder,'array')) { return; };
+        let types = [];
+        for (const type of folder) {
+            if (typeof type == 'function' && type.name !== 'base') {
+                types.push(type);
+            };
+        };
+        this.types = types;
+        return types;
+    };
+
     /*/--
 
-        Main Commands
+        Argument Functions
+
+    --/*/
+
+    updateArguments(command, msg, args) {
+        let newArgs = [];
+        for (const arg of args) {
+            let type = this.types.find(_type => _type.name == arg.type);
+            if (!type) { throw new Error('Invalid arg type.'); };
+            try {
+                let _type = new type(this, msg, {
+                    
+                })
+            } catch (error) {
+
+            };
+        };
+    };
+
+    /*/--
+
+        Message Functions
+
+    --/*/
+
+    parseMessage(msg) {
+        let args = msg.slice(1).trim().split(' ');
+        let command = args.shift();
+        //--
+        return [command,args];
+    };
+
+    handleMessage(msg) {
+        if (!msg.charAt(0) == this.prefix) { return; };
+        let parsed = this.parseMessage(msg);
+        let command = parsed[0];
+        let args = parsed[1];
+        //--
+        if (!this.fetchCommand(command)) { console.log(`Command ${command} doesn't exist.`); return; };
+        let Command = this.commands[command];
+        let _command = new Command(this, msg, args);
+        _command = updateArguments(_command, msg, args);
+    };
+
+    /*/--
+
+        Main Functions
 
     --/*/
 
     register(path) {
+        this.registerTypes();
         this.registerCommands(this.fetchCommandsIn(`${__dirname}/commands`));
         this.registerCommands(this.fetchCommandsIn(path));
     };

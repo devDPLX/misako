@@ -8,8 +8,6 @@ const readline = require('readline').createInterface({
 
 readline.question('Enter your command:\n', msg => {
     misako.register(__dirname + '/commands');
-    misako.commands.each(command => {
-        console.log(command.name);
-    })
+    misako.handleMessage(msg);
     readline.close();
 });
