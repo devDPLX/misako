@@ -7,7 +7,7 @@ class Misako extends Discord.Client {
         super(options);
         if (!options.prefix) { this.prefix = defaultPrefix; };
         //--
-        this.commands = {};
+        this.commands = new Discord.Collection();
         this._prefix = null;
     };
 
@@ -48,14 +48,21 @@ class Misako extends Discord.Client {
     --/*/
 
     fetchCommand(command) {
-        
+        if (this.validate(command,'function')) { command = command.name; };
+        if (!this.validate(command,'string')) {
+            throw new TypeError('Command must be a function or string.'); };
+        return this.commands.find(_command => _command.name == command) ||
+        this.commands.find(_command => _command.aliases.includes(command));
     };
 
     registerCommand(command) {
         if (!this.validate(command,'function')) { throw new TypeError('Command must be a function.'); };
         command = new command(this);
         if (!(command instanceof Command)) { throw new Error('Tried to register invalid command.'); };
-
+        if (this.fetchCommand(command.name)) { throw new Error(`Command ${command.name} is already registered.`); };
+        for (const alias of command.aliases) {
+            if (this.fetchCommand(alias)) { throw new Error(`Alias ${alias} is already registered.`); };
+        };
     };
 
     registerCommands(commands) {
