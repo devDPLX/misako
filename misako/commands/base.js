@@ -9,6 +9,9 @@ class BaseCommand {
         this.examples = info.examples;
         this.ownerOnly =  info.ownerOnly || false;
         this.canDM = info.canDM || false;
+        this.path;
+        // temporary
+        this.args = info.args || [];
     };
 
     async run(msg, misako, args) {

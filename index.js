@@ -1,14 +1,15 @@
-const misako = require('./misako');
-const client = new misako();
+const { Client, Command } = require('./misako');
+const misako = new Client();
 
 const readline = require('readline').createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
-readline.question('Who are you?\n', name => {
-    let commands = client.getCommandsIn(__dirname + '/misako/Commands');
-    client.registerCommands(commands);
-    console.log(commands);
+readline.question('Enter your command:\n', msg => {
+    misako.register(__dirname + '/commands');
+    misako.commands.each(command => {
+        console.log(command.name);
+    })
     readline.close();
 });

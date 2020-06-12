@@ -6,7 +6,7 @@ class TestCommand extends Command {
             name: 'test',
             aliases: [],
             description: 'Just a test command.',
-            group: 'Testing',
+            group: 'testing',
             nsfw: false,
             throttle: 0,
             examples: ['test poop lol'],
