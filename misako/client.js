@@ -10,7 +10,8 @@ class Misako extends Discord.Client {
         this.commands = new Discord.Collection();
         this.types = new Discord.Collection();
         this._prefix = null;
-        if (!options.prefix) { this.prefix = defaultPrefix; };
+        this.owners = options.owners || [];
+        this.prefix = options.prefix || defaultPrefix;
     };
 
     get prefix() { return this._prefix; };
@@ -68,7 +69,7 @@ class Misako extends Discord.Client {
                 time: 10000,
                 errors: ['time']
             }).then(col => {
-                response = col.first();
+                resolve(col.first());
             }).catch(col => {
                 reject('time');
             });
@@ -81,6 +82,26 @@ class Misako extends Discord.Client {
         Command Functions
 
     --/*/
+
+    validateCommandMessage(msg, command) {
+        let user = msg.author;
+        let channel = msg.channel;
+        let commandPerms = command.permissions;
+        //--
+        if (!command.canDM && channel.type !== 'text')
+            return [false,'This command can only be used in guilds.'];
+        let member = msg.member;
+        if (command.ownerOnly && !this.owners.find(user.id))
+            return [false,'This command is owner-only.'];
+        if (commandPerms && commandPerms.length > 0) {
+            for (const perm of commandPerms) {
+                if (!member.permissions.has(perm)) {
+                    return [false,'You don\'t have valid permissions for this command.'];
+                };
+            };
+        };
+        return true;
+    };
 
     fetchCommand(command) {
         if (this.validate(command,'function')) { command = command.name; };
@@ -179,7 +200,8 @@ class Misako extends Discord.Client {
     };
 
     handleMessage(msg) {
-        if (msg.content.charAt(0) !== this.prefix) { return; };
+        if (msg.author.bot) return;
+        if (!msg.content.startsWith(this.prefix)) return;
         if (msg.author.equals(this.user)) { return; };
         let parsed = this.parseMessage(msg.content);
         let command = parsed[0];
@@ -187,6 +209,13 @@ class Misako extends Discord.Client {
         //--
         let _command = this.fetchCommand(command) 
         if (!_command) { console.log(`Command ${command} doesn't exist.`); return; };
+        //--
+        let isValid = this.validateCommandMessage(msg,_command);
+        if (isValid[0] == false) {
+            msg.reply(isValid[1]);
+            return;
+        };
+        //--
         var parsedArgs = [];
         if (_command.args && _command.args.length > 0) {
             for (const index in _command.args) {
