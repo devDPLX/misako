@@ -40,7 +40,7 @@ class Misako extends Discord.Client {
 
     --/*/
 
-    async prompt(user, channel, content) {
+    async prompt(user, channel) {
         const filter = msg => msg.author.equals(user);
         let response;
         await channel.awaitMessages(filter,{
