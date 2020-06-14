@@ -4,7 +4,7 @@ class TestCommand extends Command {
     constructor(Client) {
         super(Client, {
             name: 'test',
-            aliases: [],
+            aliases: ['prompttest'],
             description: 'Just a test command.',
             group: 'testing',
             nsfw: false,
@@ -12,21 +12,13 @@ class TestCommand extends Command {
             examples: ['test poop lol'],
             ownerOnly: false,
             canDM: false,
-            args: [
-                {
-                    key: 'extra',
-                    type: 'string',
-                    prompt: 'What are the strings?',
-                    required: true,
-                    repeatable: true
-                }
-            ]
+            args: []
         });
 
     };
 
-    run(msg, misako, args) {
-        console.log(args);
+    async run(misako, msg) {
+        console.log(await misako.promptReaction(msg.author, msg.channel))
     };
 };
 

@@ -1,13 +1,14 @@
 const { Client, Command } = require('./misako');
+const { betaToken } = require('./config');
 const misako = new Client();
 misako.register(__dirname + '/commands');
 
-const readline = require('readline').createInterface({
-  input: process.stdin,
-  output: process.stdout
+misako.on('ready', e => {
+    console.log('connected');
 });
 
-readline.question('Enter your command:\n', msg => {
+misako.on('message', msg => {
     misako.handleMessage(msg);
-    readline.close();
-});
+}); 
+
+misako.login(betaToken);

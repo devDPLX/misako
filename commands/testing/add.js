@@ -24,10 +24,12 @@ class AddCommand extends Command {
 
     };
 
-    run(misako, msg, args) {
-        for (const arg of args) {
-            console.log(arg,typeof arg);
-        }
+    run(misako, msg, arg) {
+        let addedNumber = 0;
+        for (const number of arg) {
+            addedNumber += number;
+        };
+        console.log(`Output is ${addedNumber}`);
     };
 };
 

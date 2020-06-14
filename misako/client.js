@@ -6,11 +6,11 @@ const defaultPrefix = '?';
 class Misako extends Discord.Client {
     constructor(options = {}) {
         super(options);
-        if (!options.prefix) { this.prefix = defaultPrefix; };
         //--
         this.commands = new Discord.Collection();
         this.types = new Discord.Collection();
         this._prefix = null;
+        if (!options.prefix) { this.prefix = defaultPrefix; };
     };
 
     get prefix() { return this._prefix; };
@@ -23,7 +23,7 @@ class Misako extends Discord.Client {
 
     /*/--
 
-        Validate Functions
+        Utility Functions
 
     --/*/
 
@@ -33,6 +33,46 @@ class Misako extends Discord.Client {
         }
         return typeof value == type;
     };
+
+    /*/--
+
+        Input Functions
+
+    --/*/
+
+    async prompt(user, channel, content) {
+        const filter = msg => msg.author.equals(user);
+        let response;
+        await channel.awaitMessages(filter,{
+            max: 1,
+            time: 10000,
+            errors: ['time']
+        }).then(col => {
+            response = col.first();
+        }).catch(col => {
+            channel.send(`${user.toString()}, You did not provide input within one minute.`);
+        });
+        return response;
+    };
+
+    async promptReaction(user, channel, msg) {
+        if (!msg) { msg = `${user.toString()}, awaiting a reaction to this message.`; };
+        if (this.validate(msg,'string')) { 
+            msg = await channel.send(msg);
+        };
+        const filter = (reaction, reactUser) => reactUser.equals(user);
+        let response;
+        await msg.awaitReactions(filter,{
+            max: 1,
+            time: 10000,
+            errors: ['time']
+        }).then(col => {
+            response = col.first();
+        }).catch(col => {
+            channel.send(`${user.toString()}, You did not provide input within one minute.`);
+        });
+        return response;
+    }
 
     /*/--
 
@@ -137,8 +177,9 @@ class Misako extends Discord.Client {
     };
 
     handleMessage(msg) {
-        if (!msg.charAt(0) == this.prefix) { return; };
-        let parsed = this.parseMessage(msg);
+        if (msg.content.charAt(0) !== this.prefix) { return; };
+        if (msg.author.equals(this.user)) { return; };
+        let parsed = this.parseMessage(msg.content);
         let command = parsed[0];
         let args = parsed[1];
         //--
@@ -175,8 +216,11 @@ class Misako extends Discord.Client {
                 }
                 parsedArgs.push(value);
             };
+            if (_command.args.length == 1) { parsedArgs = parsedArgs[0]; };
+            _command.run(this, msg, parsedArgs);
+        } else {
+            _command.run(this, msg);
         };
-        _command.run(this, msg, parsedArgs);
     };
 
     /*/--
