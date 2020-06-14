@@ -12,6 +12,8 @@ class Misako extends Discord.Client {
         this._prefix = null;
         this.owners = options.owners || [];
         this.prefix = options.prefix || defaultPrefix;
+
+        this.register(options.commandPath);
     };
 
     get prefix() { return this._prefix; };
@@ -57,16 +59,22 @@ class Misako extends Discord.Client {
         return response;
     };
 
-    async promptReaction(user, channel, msg) {
+    async promptReaction(user, channel, msg, useGivenReactions = false) {
         if (!msg) { msg = `${user.toString()}, awaiting a reaction to this message.`; };
         if (this.validate(msg,'string')) { 
             msg = await channel.send(msg);
         };
         let response = new Promise((resolve,reject) => {
-            const filter = (reaction, reactUser) => reactUser.equals(user);
+            const filter = (reaction, reactUser) => {
+                return (!useGivenReactions && reactUser.equals(user)) || (
+                    useGivenReactions && 
+                    reaction.users.cache.find(reactUser => reactUser.bot) &&
+                    reaction.count > 1
+                )
+            };
             msg.awaitReactions(filter,{
                 max: 1,
-                time: 10000,
+                time: 30000,
                 errors: ['time']
             }).then(col => {
                 resolve(col.first());

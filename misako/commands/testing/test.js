@@ -25,7 +25,7 @@ class TestCommand extends Command {
         for (const reactEmoji of reactEmojis) {
             await reactMsg.react(reactEmoji);
         };
-        misako.promptReaction(msg.author,msg.channel,reactMsg)
+        misako.promptReaction(msg.author,msg.channel,reactMsg,true)
         .then(reaction => {
             if (reactEmojis.includes(reaction.emoji.identifier)) {
                 msg.reply(`You reacted with ${reaction.emoji.name}`);
