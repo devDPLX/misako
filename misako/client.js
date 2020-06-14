@@ -9,6 +9,7 @@ class Misako extends Discord.Client {
         //--
         this.commands = new Discord.Collection();
         this.types = new Discord.Collection();
+        this.groups = [];
         this._prefix = null;
         this.owners = options.owners || [];
         this.prefix = options.prefix || defaultPrefix;
@@ -91,26 +92,6 @@ class Misako extends Discord.Client {
 
     --/*/
 
-    validateCommandMessage(msg, command) {
-        let user = msg.author;
-        let channel = msg.channel;
-        let commandPerms = command.permissions;
-        //--
-        if (!command.canDM && channel.type !== 'text')
-            return [false,'This command can only be used in guilds.'];
-        let member = msg.member;
-        if (command.ownerOnly && !this.owners.find(user.id))
-            return [false,'This command is owner-only.'];
-        if (commandPerms && commandPerms.length > 0) {
-            for (const perm of commandPerms) {
-                if (!member.permissions.has(perm)) {
-                    return [false,'You don\'t have valid permissions for this command.'];
-                };
-            };
-        };
-        return true;
-    };
-
     fetchCommand(command) {
         if (this.validate(command,'function')) { command = command.name; };
         if (!this.validate(command,'string')) {
@@ -143,6 +124,7 @@ class Misako extends Discord.Client {
                 arg.parse = type.parse;
             };
         };
+        if (!this.groups.includes(_command.group)) this.groups.push(_command.group);
         this.commands.set(_command.name,_command);
     };
 
@@ -218,7 +200,7 @@ class Misako extends Discord.Client {
         let _command = this.fetchCommand(command) 
         if (!_command) { console.log(`Command ${command} doesn't exist.`); return; };
         //--
-        let isValid = this.validateCommandMessage(msg,_command);
+        let isValid = _command.canRunCommand(msg);
         if (isValid[0] == false) {
             msg.reply(isValid[1]);
             return;
