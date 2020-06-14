@@ -1,21 +1,13 @@
 const Type = require('./base');
 
 class NumberType extends Type {
-    constructor(misako, msg, options) {
-        super(misako, msg, options);
-        this.default = 0;
-        this.value = options.value || this.default;
+    constructor(misako) {
+        super(misako);
+        this.name = 'number';
     };
 
-    get value() {
-        return this._value;
-    };
-
-    set value(newValue) {
-        if (isNaN(newValue)) {
-            throw new Error(`newValue: ${String(newValue)} is not a number.`);
-        };
-        this._value = newValue;
+    parse(value) {
+        return Number(value);
     };
 }
 

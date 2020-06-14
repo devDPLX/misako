@@ -24,8 +24,10 @@ class AddCommand extends Command {
 
     };
 
-    run(msg, misako, args) {
-        console.log(args);
+    run(misako, msg, args) {
+        for (const arg of args) {
+            console.log(arg,typeof arg);
+        }
     };
 };
 

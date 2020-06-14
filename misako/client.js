@@ -9,7 +9,6 @@ class Misako extends Discord.Client {
         if (!options.prefix) { this.prefix = defaultPrefix; };
         //--
         this.commands = new Discord.Collection();
-        this.commandObjects = new Discord.Collection();
         this.types = new Discord.Collection();
         this._prefix = null;
     };
@@ -45,8 +44,8 @@ class Misako extends Discord.Client {
         if (this.validate(command,'function')) { command = command.name; };
         if (!this.validate(command,'string')) {
             throw new TypeError('Command must be a function or string.'); };
-        return this.commandObjects.find(_command => _command.name == command) ||
-        this.commandObjects.find(_command => _command.aliases.includes(command));
+        return this.commands.find(_command => _command.name == command) ||
+        this.commands.find(_command => _command.aliases.includes(command));
     };
 
     fetchCommandPath(command) {
@@ -63,8 +62,17 @@ class Misako extends Discord.Client {
         };
         //--
         _command.path = this.fetchCommandPath(_command);
-        this.commands.set(_command.name,command);
-        this.commandObjects.set(_command.name,_command);
+        if (_command.args) {
+            let args = _command.args;
+            for (const arg of args) {
+                let type = this.types.find(_type => _type.name == arg.type);
+                if (!type) {
+                    throw new Error(`Argument ${arg.key} doesn't have it's type registered.`);
+                };
+                arg.parse = type.parse;
+            };
+        };
+        this.commands.set(_command.name,_command);
     };
 
     registerCommands(commands) {
@@ -103,36 +111,16 @@ class Misako extends Discord.Client {
     registerTypes() {
         const typePath = path.join(__dirname,'types');
         const folder = require('require-all')(typePath);
-        if (!this.validate(folder,'array')) { return; };
+        if (!this.validate(folder,'object')) { return; };
         let types = [];
-        for (const type of folder) {
-            if (typeof type == 'function' && type.name !== 'base') {
-                types.push(type);
+        for (const type of Object.values(folder)) {
+            if (typeof type == 'function' && type.name !== 'Type') {
+                let _type = new type(this);
+                types.push(_type.name,_type);
             };
         };
         this.types = types;
         return types;
-    };
-
-    /*/--
-
-        Argument Functions
-
-    --/*/
-
-    updateArguments(command, msg, args) {
-        let newArgs = [];
-        for (const arg of args) {
-            let type = this.types.find(_type => _type.name == arg.type);
-            if (!type) { throw new Error('Invalid arg type.'); };
-            try {
-                let _type = new type(this, msg, {
-                    
-                })
-            } catch (error) {
-
-            };
-        };
     };
 
     /*/--
@@ -154,10 +142,41 @@ class Misako extends Discord.Client {
         let command = parsed[0];
         let args = parsed[1];
         //--
-        if (!this.fetchCommand(command)) { console.log(`Command ${command} doesn't exist.`); return; };
-        let Command = this.commands[command];
-        let _command = new Command(this, msg, args);
-        _command = updateArguments(_command, msg, args);
+        let _command = this.fetchCommand(command) 
+        if (!_command) { console.log(`Command ${command} doesn't exist.`); return; };
+        var parsedArgs = [];
+        if (_command.args && _command.args.length > 0) {
+            for (const index in _command.args) {
+                let arg = _command.args[index];
+                if (arg.required && args.length == 0) {
+                    console.log('not enough arguments given.');
+                    return;
+                };
+                var value = args[0];
+                if (arg.repeatable) {
+                    let valueArray = [];
+                    for (var _value of args) {
+                        let parsedValue = arg.parse(_value);
+                        if (!parsedValue) {
+                            console.log(`${_value} should have been a ${arg.type}.`)
+                            return;
+                        };
+                        valueArray.push(parsedValue);
+                    };
+                    value = valueArray;
+                } else {
+                    let parsedValue = arg.parse(value);
+                    if (!parsedValue) {
+                        console.log(`${_value} should have been a ${arg.type}.`)
+                        return;
+                    };
+                    value = parsedValue;
+                    args.shift();
+                }
+                parsedArgs.push(value);
+            };
+        };
+        _command.run(this, msg, parsedArgs);
     };
 
     /*/--
