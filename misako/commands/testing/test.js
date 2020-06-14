@@ -18,7 +18,15 @@ class TestCommand extends Command {
     };
 
     async run(misako, msg) {
-        console.log(await misako.promptReaction(msg.author, msg.channel))
+        misako.prompt(msg.author, msg.channel)
+        .then(msg => {
+            msg.reply(`Response message ID: ${msg.id}`)
+        })
+        .catch(error => {
+            if (error == 'time') {
+                msg.reply('You didn\'t respond in time.');
+            };
+        });
     };
 };
 

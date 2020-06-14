@@ -41,16 +41,17 @@ class Misako extends Discord.Client {
     --/*/
 
     async prompt(user, channel) {
-        const filter = msg => msg.author.equals(user);
-        let response;
-        await channel.awaitMessages(filter,{
-            max: 1,
-            time: 10000,
-            errors: ['time']
-        }).then(col => {
-            response = col.first();
-        }).catch(col => {
-            channel.send(`${user.toString()}, You did not provide input within one minute.`);
+        let response = new Promise((resolve,reject) => {
+            const filter = msg => msg.author.equals(user);
+            channel.awaitMessages(filter,{
+                max: 1,
+                time: 60000,
+                errors: ['time']
+            }).then(col => {
+                resolve(col.first());
+            }).catch(col => {
+                reject('time');
+            });
         });
         return response;
     };
@@ -60,16 +61,17 @@ class Misako extends Discord.Client {
         if (this.validate(msg,'string')) { 
             msg = await channel.send(msg);
         };
-        const filter = (reaction, reactUser) => reactUser.equals(user);
-        let response;
-        await msg.awaitReactions(filter,{
-            max: 1,
-            time: 10000,
-            errors: ['time']
-        }).then(col => {
-            response = col.first();
-        }).catch(col => {
-            channel.send(`${user.toString()}, You did not provide input within one minute.`);
+        let response = new Promise((resolve,reject) => {
+            const filter = (reaction, reactUser) => reactUser.equals(user);
+            msg.awaitReactions(filter,{
+                max: 1,
+                time: 10000,
+                errors: ['time']
+            }).then(col => {
+                response = col.first();
+            }).catch(col => {
+                reject('time');
+            });
         });
         return response;
     }
