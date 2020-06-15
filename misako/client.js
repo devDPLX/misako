@@ -216,7 +216,7 @@ class Misako extends Discord.Client {
             if (time > expirationTime) {
                 // i dont know what the fuck this is but it works
                 const timeLeft = -(-_command.throttle-((expirationTime - time) / 1000));
-                msg.reply(`Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${_command.name}\` command.`);
+                msg.reply(`Please wait ${timeLeft.toFixed(1)} more second(s) before reusing **${_command.name}**.`);
                 return;
             }
         };
