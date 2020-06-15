@@ -9,6 +9,7 @@ class Misako extends Discord.Client {
         //--
         this.commands = new Discord.Collection();
         this.types = new Discord.Collection();
+        this.throttles = new Discord.Collection();
         this.groups = [];
         this._prefix = null;
         this.owners = options.owners || [];
@@ -125,6 +126,7 @@ class Misako extends Discord.Client {
             };
         };
         if (!this.groups.includes(_command.group)) this.groups.push(_command.group);
+        this.throttles.set(_command.name,new Discord.Collection());
         this.commands.set(_command.name,_command);
     };
 
@@ -206,6 +208,19 @@ class Misako extends Discord.Client {
             return;
         };
         //--
+        let timestamps = this.throttles.get(_command.name);
+        let userStamp = timestamps.get(msg.author.id);
+        let time = new Date();
+        if (userStamp) {
+            const expirationTime = userStamp.getTime() + _command.throttle;
+            if (time > expirationTime) {
+                // i dont know what the fuck this is but it works
+                const timeLeft = -(-_command.throttle-((expirationTime - time) / 1000));
+                msg.reply(`Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${_command.name}\` command.`);
+                return;
+            }
+        };
+        //--
         var parsedArgs = [];
         if (_command.args && _command.args.length > 0) {
             for (const index in _command.args) {
@@ -215,7 +230,9 @@ class Misako extends Discord.Client {
                     return;
                 };
                 var value = args[0];
-                if (arg.repeatable) {
+                if (value == undefined && !arg.required) {
+                    //lol
+                } else if (arg.repeatable) {
                     let valueArray = [];
                     for (var _value of args) {
                         let parsedValue = arg.parse(_value);
@@ -242,6 +259,8 @@ class Misako extends Discord.Client {
         } else {
             _command.run(this, msg);
         };
+        timestamps.set(msg.author.id, time);
+        setTimeout(() => timestamps.delete(msg.author.id), _command.throttle * 1000);
     };
 
     /*/--
