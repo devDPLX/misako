@@ -29,7 +29,7 @@ class HelpCommand extends Command {
         let groups = misako.groups;
         let helpString = '';
         //--
-        if (arg) {
+        if (arg !== undefined) {
             let command = misako.fetchCommand(arg);
             if (!command) { 
                 helpString += `No command by that name exists. 
@@ -41,15 +41,18 @@ You can use **${misako.prefix}help** to get a list of all commands you can perfo
 **description:** ${command.description}
 **group:** ${command.group}
 **nsfw:** ${command.nsfw || false}
-**examples:** ${command.examples || 'No examples given.'}
+**examples:** ${toString(command.examples) || 'No examples given.'}
 **ownerOnly:** ${command.ownerOnly || false}
 **guildOnly:** ${command.canDM}`;
             };
         } else {
-            helpString += `**List of commands you can perform in ${msg.guild.name || 'DMs'}**\n\n`;
+            if (msg.channel.type == 'text') {
+                helpString += `**List of commands you can perform in ${msg.guild.name}**\n\n`;
+            } else {
+                helpString += `**List of commands you can perform in DMs**\n\n`;
+            };
             for (const group of groups) {
                 let atleastOne = false;
-                console.log(group);
                 commands.each(command => {
                     if (this.canRunCommand(msg) && command.group == group) {
                         if (!atleastOne) { helpString += `**__${group}__**\n`; atleastOne = true; };
