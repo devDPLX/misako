@@ -8,7 +8,7 @@ class TestCommand extends Command {
             description: 'Just a test command.',
             group: 'testing',
             nsfw: false,
-            throttle: 0,
+            throttle: 5,
             examples: ['test poop lol'],
             ownerOnly: false,
             canDM: false,
