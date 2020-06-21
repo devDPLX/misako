@@ -235,7 +235,7 @@ class Misako extends Discord.Client {
                 } else if (arg.repeatable) {
                     let valueArray = [];
                     for (var _value of args) {
-                        let parsedValue = arg.parse(_value);
+                        let parsedValue = arg.parse(msg, _value);
                         if (!parsedValue) {
                             console.log(`${_value} should have been a ${arg.type}.`)
                             return;
@@ -244,7 +244,7 @@ class Misako extends Discord.Client {
                     };
                     value = valueArray;
                 } else {
-                    let parsedValue = arg.parse(value);
+                    let parsedValue = arg.parse(msg, value);
                     if (!parsedValue) {
                         console.log(`${_value} should have been a ${arg.type}.`)
                         return;

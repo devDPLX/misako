@@ -3,7 +3,7 @@ class Type {
         this.misako = misako;
     };
 
-    parse(value) {
+    parse(msg, value) {
         throw new Error(`Type ${this.name} doesn't have a parse function.`);
     };
 };

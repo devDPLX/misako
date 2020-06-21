@@ -6,7 +6,7 @@ class StringType extends Type {
         this.name = 'string';
     };
 
-    parse(value) {
+    parse(msg, value) {
         return String(value);
     };
 }

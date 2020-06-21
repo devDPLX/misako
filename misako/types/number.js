@@ -6,7 +6,7 @@ class NumberType extends Type {
         this.name = 'number';
     };
 
-    parse(value) {
+    parse(msg, value) {
         return Number(value);
     };
 }

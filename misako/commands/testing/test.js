@@ -9,15 +9,22 @@ class TestCommand extends Command {
             group: 'testing',
             nsfw: false,
             throttle: 5,
-            examples: ['test'],
+            examples: ['test #general'],
             ownerOnly: false,
             canDM: false,
-            args: []
+            args: [
+              {
+                  key: 'channel-name',
+                  type: 'channel',
+                  required: true,
+                  repeatable: false
+              }
+            ]
         });
 
     };
 
-    async run(misako, msg) {
+    /*async run(misako, msg) {
         let channel = msg.channel;
         let author = msg.author;
         await msg.delete().catch(error => { console.log(error); });
@@ -45,6 +52,10 @@ class TestCommand extends Command {
                 channel.send('You didn\'t react in the time alloted.');
             };
         });
+    };*/
+
+    async run(misako, msg, arg) {
+      msg.reply(arg.lastMessage);
     };
 };
 
