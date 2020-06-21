@@ -9,7 +9,7 @@ class TestCommand extends Command {
             group: 'testing',
             nsfw: false,
             throttle: 5,
-            examples: ['test poop lol'],
+            examples: ['test'],
             ownerOnly: false,
             canDM: false,
             args: []
@@ -18,25 +18,31 @@ class TestCommand extends Command {
     };
 
     async run(misako, msg) {
-        let reactMsg = await msg.reply('Pick an emoji.');
-        let guildEmojis = msg.guild.emojis.cache;
+        let channel = msg.channel;
+        let author = msg.author;
+        await msg.delete().catch(error => { console.log(error); });
+        let reactMsg = await channel.send(`${author.name}, Pick an emoji.`);
+        let guildEmojis = channel.guild.emojis.cache;
         let reactEmojis = [];
         guildEmojis.each(emoji => { reactEmojis.push(emoji.identifier); });
         for (const reactEmoji of reactEmojis) {
             await reactMsg.react(reactEmoji);
         };
-        misako.promptReaction(msg.author,msg.channel,reactMsg,true)
+        misako.promptReaction(author,channel,reactMsg,true)
         .then(reaction => {
             if (reactEmojis.includes(reaction.emoji.identifier)) {
-                msg.reply(`You reacted with ${reaction.emoji.name}`);
+                channel.send(`${author.name}, You reacted with ${reaction.emoji.name}`);
+                reactMsg.delete().catch(error => {
+                  console.log(error);
+                });
             } else {
-                msg.reply(`That isn't a valid emoji. Try again dumbass.`);
+                channel.send(`That isn't a valid emoji.`);
             };
-            reaction.users.remove(msg.author);
+            reaction.users.remove(author);
         })
         .catch(error => {
             if (error == 'time') {
-                msg.reply('You didn\'t react in the time alloted.');
+                channel.send('You didn\'t react in the time alloted.');
             };
         });
     };
