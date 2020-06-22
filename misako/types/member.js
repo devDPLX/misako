@@ -1,19 +1,20 @@
 const Type = require('./base');
 
-class UserType extends Type {
+class MemberType extends Type {
     constructor(misako) {
         super(misako);
-        this.name = 'user';
+        this.name = 'member';
         this.misako = misako;
     };
 
     parse(msg, value) {
         let misako = this.misako;
-        let users = misako.users.cache;
+        let guild = msg.guild;
+        let members = guild.members.cache;
         //--
         let regexMatch = value.match(/^(?:<@!?)?([0-9]+)>?$/);
         if (regexMatch) {
-          return users.get(regexMatch[1]) || undefined;
+          return members.get(regexMatch[1]) || undefined;
         };
         return undefined;
     };
