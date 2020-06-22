@@ -13,12 +13,12 @@ class TestCommand extends Command {
             ownerOnly: false,
             canDM: false,
             args: [
-              {
-                  key: 'channel-name',
-                  type: 'channel',
+              /*{
+                  key: 'username',
+                  type: 'user',
                   required: true,
                   repeatable: false
-              }
+              }*/
             ]
         });
 
@@ -54,8 +54,9 @@ class TestCommand extends Command {
         });
     };*/
 
-    async run(misako, msg, arg) {
-      msg.reply(arg.lastMessage);
+    async run(misako, msg) {
+      let promptMsg = await misako.prompt(msg.author,msg.channel,'user');
+      console.log(promptMsg.content);
     };
 };
 

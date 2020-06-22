@@ -45,9 +45,22 @@ class Misako extends Discord.Client {
 
     --/*/
 
-    async prompt(user, channel) {
+    async prompt(user, channel, typeName = undefined) {
         let response = new Promise((resolve,reject) => {
-            const filter = msg => msg.author.equals(user);
+            const filter = msg => {
+              if (msg.author.equals(user)) {
+                if (typeName) {
+                  let type = this.types.find(_type => _type.name == typeName);
+                  if (!type) { throw new Error('Type by that name doesn\'t exist.'); };
+                  let parseArg = type.parse(msg,msg.content);
+                  if (parseArg !== undefined) { return true; };
+                  channel.send('Not valid type.');
+                  return false;
+                } else { return true; };
+                return false;
+              };
+              return false;
+            };
             channel.awaitMessages(filter,{
                 max: 1,
                 time: 60000,

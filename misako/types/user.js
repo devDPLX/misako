@@ -10,7 +10,7 @@ class UserType extends Type {
     parse(msg, value) {
         let misako = this.misako;
         let guild = msg.guild;
-        let users = guild.users.cache;
+        let users = guild.members.cache;
         //--
         let regexMatch = value.match(/^(?:<@!?)?([0-9]+)>?$/);
         if (regexMatch) {
