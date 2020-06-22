@@ -263,6 +263,13 @@ class Misako extends Discord.Client {
         setTimeout(() => timestamps.delete(msg.author.id), _command.throttle * 1000);
     };
 
+    //--
+
+    registerExtensions() {
+      const extPath = path.join(__dirname,'extensions');
+      const folder = require('require-all')(extPath);
+    };
+
     /*/--
 
         Main Functions
@@ -271,6 +278,7 @@ class Misako extends Discord.Client {
 
     register(path) {
         this.registerTypes();
+        this.registerExtensions();
         this.registerCommands(this.fetchCommandsIn(`${__dirname}/commands`));
         this.registerCommands(this.fetchCommandsIn(path));
     };
