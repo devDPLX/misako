@@ -20,4 +20,4 @@ class MemberType extends Type {
     };
 }
 
-module.exports = UserType;
+module.exports = MemberType;
