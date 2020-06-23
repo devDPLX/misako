@@ -57,7 +57,6 @@ class Misako extends Discord.Client {
                   channel.sendEmbed(`Sorry, that wasn't a valid entry. The expected type is a **${type.name}.**`);
                   return false;
                 } else { return true; };
-                return false;
               };
               return false;
             };
@@ -67,7 +66,7 @@ class Misako extends Discord.Client {
                 errors: ['time']
             }).then(col => {
                 resolve(col.first());
-            }).catch(col => {
+            }).catch(() => {
                 reject('time');
             });
         });
@@ -93,7 +92,7 @@ class Misako extends Discord.Client {
                 errors: ['time']
             }).then(col => {
                 resolve(col.first());
-            }).catch(col => {
+            }).catch(() => {
                 reject('time');
             });
         });
@@ -252,7 +251,7 @@ class Misako extends Discord.Client {
                         let _value = args[_index];
                         let parsedValue = arg.parse(msg, _value);
                         if (!parsedValue) {
-                            channel.sendEmbed(`Argument at position **${_index}** should have been a ${arg.type}. Please try your command again or use **${this.prefix}help ${_command.name}** for more detailed help with this command.`);
+                            channel.sendEmbed(`Argument at position **${index}** should have been a ${arg.type}. Please try your command again or use **${this.prefix}help ${_command.name}** for more detailed help with this command.`);
                             return;
                         };
                         valueArray.push(parsedValue);
@@ -261,7 +260,7 @@ class Misako extends Discord.Client {
                 } else {
                     let parsedValue = arg.parse(msg, value);
                     if (!parsedValue) {
-                        channel.sendEmbed(`Argument at position **${String(index + 1)}** should have been a ${arg.type}. Please try your command again or use **${this.prefix}help ${_command.name}** for more detailed help with this command.`);
+                        channel.sendEmbed(`Argument at position **${index + 1}** should have been a ${arg.type}. Please try your command again or use **${this.prefix}help ${_command.name}** for more detailed help with this command.`);
                         return;
                     };
                     value = parsedValue;
