@@ -54,7 +54,7 @@ class Misako extends Discord.Client {
                   if (!type) { throw new Error('Type by that name doesn\'t exist.'); };
                   let parseArg = type.parse(msg,msg.content);
                   if (parseArg !== undefined) { return true; };
-                  channel.send('Not valid type.');
+                  channel.sendEmbed(`Sorry, that wasn't a valid entry. The expected type is a **${type.name}.**`);
                   return false;
                 } else { return true; };
                 return false;
@@ -77,7 +77,7 @@ class Misako extends Discord.Client {
     async promptReaction(user, channel, msg, useGivenReactions = false) {
         if (!msg) { msg = `${user.toString()}, awaiting a reaction to this message.`; };
         if (this.validate(msg,'string')) { 
-            msg = await channel.send(msg);
+            msg = await channel.sendEmbed(msg);
         };
         let response = new Promise((resolve,reject) => {
             const filter = (reaction, reactUser) => {
@@ -211,9 +211,10 @@ class Misako extends Discord.Client {
         let parsed = this.parseMessage(msg.content);
         let command = parsed[0];
         let args = parsed[1];
+        let channel = msg.channel;
         //--
         let _command = this.fetchCommand(command) 
-        if (!_command) { console.log(`Command ${command} doesn't exist.`); return; };
+        if (!_command) { channel.sendEmbed(`Sorry, that command doesn't exist. Try using **${this.prefix}help** for a list of commands I can perform for you.`); return; };
         //--
         let isValid = _command.canRunCommand(msg);
         if (isValid[0] == false) {
@@ -229,7 +230,7 @@ class Misako extends Discord.Client {
             if (time > expirationTime) {
                 // i dont know what the fuck this is but it works
                 const timeLeft = -(-_command.throttle-((expirationTime - time) / 1000));
-                msg.reply(`Please wait ${timeLeft.toFixed(1)} more second(s) before reusing **${_command.name}**.`);
+                channel.sendEmbed(`Please wait ${timeLeft.toFixed(1)} more second(s) before reusing **${_command.name}**.`);
                 return;
             }
         };
@@ -239,7 +240,7 @@ class Misako extends Discord.Client {
             for (const index in _command.args) {
                 let arg = _command.args[index];
                 if (arg.required && args.length == 0) {
-                    console.log('not enough arguments given.');
+                    channel.sendEmbed(`You did not provide enough arguments for this command. Please try your command again or use **${this.prefix}help ${_command.name}** for more detailed help with this command.`);
                     return;
                 };
                 var value = args[0];
@@ -247,10 +248,11 @@ class Misako extends Discord.Client {
                     //lol
                 } else if (arg.repeatable) {
                     let valueArray = [];
-                    for (var _value of args) {
+                    for (var _index in args) {
+                        let _value = args[_index];
                         let parsedValue = arg.parse(msg, _value);
                         if (!parsedValue) {
-                            console.log(`${_value} should have been a ${arg.type}.`)
+                            channel.sendEmbed(`Argument at position **${_index}** should have been a ${arg.type}. Please try your command again or use **${this.prefix}help ${_command.name}** for more detailed help with this command.`);
                             return;
                         };
                         valueArray.push(parsedValue);
@@ -259,7 +261,7 @@ class Misako extends Discord.Client {
                 } else {
                     let parsedValue = arg.parse(msg, value);
                     if (!parsedValue) {
-                        console.log(`${_value} should have been a ${arg.type}.`)
+                        channel.sendEmbed(`Argument at position **${String(index + 1)}** should have been a ${arg.type}. Please try your command again or use **${this.prefix}help ${_command.name}** for more detailed help with this command.`);
                         return;
                     };
                     value = parsedValue;
