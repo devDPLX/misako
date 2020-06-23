@@ -1,7 +1,7 @@
 const { Structures, MessageEmbed } = require('discord.js');
 
-module.exports = Structures.extend('DMChannel', DMChannel => {
-  class ExtendedDMChannel extends DMChannel {
+module.exports = Structures.extend('TextChannel', TextChannel => {
+  class ExtendedTextChannel extends TextChannel {
     constructor (misako, options) {
       super(misako,options);
     };
@@ -24,5 +24,5 @@ module.exports = Structures.extend('DMChannel', DMChannel => {
     };
   };
 
-  return ExtendedDMChannel;
+  return ExtendedTextChannel;
 })
