@@ -56,7 +56,8 @@ class TestCommand extends Command {
 
     async run(misako, msg) {
       let promptMsg = await misako.prompt(msg.author,msg.channel,'user');
-      msg.channel.sendEmbed(promptMsg.content);
+      let msgEmbed = await msg.channel.sendEmbed(promptMsg.content);
+      console.log(msgEmbed);
     };
 };
 

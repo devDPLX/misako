@@ -6,21 +6,23 @@ module.exports = Structures.extend('DMChannel', DMChannel => {
       super(misako,options);
     };
 
-    sendEmbed(content, options) {
-      if (!content) { throw new Error('Content not given.'); };
-      content = String(content);
-      if (!content) { throw new Error('Content was not valid type.'); };
-      let msgEmbed = new MessageEmbed({
-        title: options.title || '**Misako**',
-        description = content || 'No content was given for this field.',
-        footer: {
-          text: 'A bot by dep1etion.',
-          iconURL: this.client.user.defaultAvatarURL
-        },
-        color: options.color || '#0099ff'
+    async sendEmbed(content, options = {}) {
+      return new Promise((resolve,reject) => {
+        if (!content) { reject('Content not given.'); };
+        content = String(content);
+        if (!content) { reject('Content was not valid type.'); };
+        let msgEmbed = new MessageEmbed({
+          title: options.title || '**Misako**',
+          description: content || 'No content was given for this field.',
+          footer: {
+            text: 'A bot by dep1etion.',
+            iconURL: this.client.user.defaultAvatarURL
+          },
+          hexColor: options.color || '#0099ff'
+        });
+        msgEmbed.setTimestamp();
+        resolve(this.send(msgEmbed));
       });
-      msgEmbed.setTimestamp();
-      this.send(msgEmbed);
     };
   };
 
