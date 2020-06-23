@@ -1,4 +1,5 @@
 const Command = require('../base');
+const { MessageEmbed } = require('discord.js');
 
 class HelpCommand extends Command {
     constructor(Client) {
@@ -27,42 +28,61 @@ class HelpCommand extends Command {
     async run(misako, msg, arg) {
         let commands = misako.commands;
         let groups = misako.groups;
-        let helpString = '';
+        let channel = msg.channel;
+        let author = msg.author;
+        let msgEmbed = new MessageEmbed({
+          title: '**Misako**',
+          footer: {
+            text: 'A bot by dep1etion.',
+            iconURL: misako.user.defaultAvatarURL
+          },
+          color: '#0099ff'
+        });
         //--
         if (arg !== undefined) {
             let command = misako.fetchCommand(arg);
+            let _string = '';
             if (!command) { 
-                helpString += `No command by that name exists. 
-                
-You can use **${misako.prefix}help** to get a list of all commands you can perform.`;
+                channel.sendEmbed(`No command by that name exists. You can use **${misako.prefix}help** to get a list of all the commands I can perform for you.`);
+                return;
             } else {
-                helpString += `**__${command.name} command__**
-**aliases:** ${toString(command.aliases) || 'No aliases given.'}
-**description:** ${command.description}
-**group:** ${command.group}
-**nsfw:** ${command.nsfw || false}
-**examples:** ${toString(command.examples) || 'No examples given.'}
-**ownerOnly:** ${command.ownerOnly || false}
-**guildOnly:** ${command.canDM}`;
+                _string += `**aliases:** ${String(command.aliases) || 'No aliases given.'}\n`;
+                _string += `**description:** ${command.description}\n`;
+                _string += `**group:** ${command.group}\n`;
+                _string += `**nsfw:** ${command.nsfw || false}\n`;
+                _string += `**examples:** ${String(command.examples) || 'No examples given.'}\n`;
+                _string += `**ownerOnly:** ${command.ownerOnly || false}\n`;
+                _string += `**guildOnly:** ${command.canDM || false}\n`;
+                msgEmbed.addFields({
+                  name: `**__${command.name} __**`,
+                  value: _string
+                });
             };
         } else {
             if (msg.channel.type == 'text') {
-                helpString += `**List of commands you can perform in ${msg.guild.name}**\n\n`;
+                msgEmbed.setDescription(`**__List of commands you can perform in ${msg.guild.name}__**`);
             } else {
-                helpString += `**List of commands you can perform in DMs**\n\n`;
+                msgEmbed.setDescription(`**__List of commands you can perform in DMs__**`);
             };
             for (const group of groups) {
                 let atleastOne = false;
+                let groupString = `**__${group}__**`;
+                let commandString = '';
                 commands.each(command => {
-                    if (this.canRunCommand(msg) && command.group == group) {
-                        if (!atleastOne) { helpString += `**__${group}__**\n`; atleastOne = true; };
-                        helpString += `**${command.name}:** ${command.description}\n`;
+                    if (command.group == group && this.canRunCommand(msg)) {
+                        if (!atleastOne) { atleastOne = true; };
+                        commandString += `**${command.name}:** ${command.description}\n`;
                     };
                 });
-                if (atleastOne) { helpString += '\n'; };
+                if (atleastOne) { 
+                  msgEmbed.addFields({
+                    name: groupString,
+                    value: commandString
+                  });
+                };
             };
         };
-        msg.channel.send(helpString);
+        msg.channel.send(msgEmbed);
     };
 };
 
