@@ -251,7 +251,7 @@ class Misako extends Discord.Client {
                         let _value = args[_index];
                         let parsedValue = arg.parse(msg, _value);
                         if (!parsedValue) {
-                            channel.sendEmbed(`Argument at position **${index}** should have been a ${arg.type}. Please try your command again or use **${this.prefix}help ${_command.name}** for more detailed help with this command.`);
+                            channel.sendEmbed(`Argument at position **${_index}** should have been a(n) ${arg.type}. Please try your command again or use **${this.prefix}help ${_command.name}** for more detailed help with this command.`);
                             return;
                         };
                         valueArray.push(parsedValue);
@@ -260,7 +260,7 @@ class Misako extends Discord.Client {
                 } else {
                     let parsedValue = arg.parse(msg, value);
                     if (!parsedValue) {
-                        channel.sendEmbed(`Argument at position **${index + 1}** should have been a ${arg.type}. Please try your command again or use **${this.prefix}help ${_command.name}** for more detailed help with this command.`);
+                        channel.sendEmbed(`Argument at position **${index}** should have been a(n) ${arg.type}. Please try your command again or use **${this.prefix}help ${_command.name}** for more detailed help with this command.`);
                         return;
                     };
                     value = parsedValue;
@@ -281,7 +281,7 @@ class Misako extends Discord.Client {
 
     registerExtensions() {
       const extPath = path.join(__dirname,'extensions');
-      const folder = require('require-all')(extPath);
+      require('require-all')(extPath);
     };
 
     /*/--
