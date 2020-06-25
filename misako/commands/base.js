@@ -1,5 +1,6 @@
 class BaseCommand {
-    constructor(client, info) {
+    constructor(misako, info) {
+        this.misako = misako;
         this.name = info.name;
         this.aliases = info.aliases || [];
         this.description = info.description;
@@ -23,7 +24,7 @@ class BaseCommand {
         if (!this.canDM && msg.channel.type !== 'text')
             return [false,'This command can only be used in guilds.'];
         let member = msg.member;
-        if (this.ownerOnly && !this.owners.find(user.id))
+        if (this.ownerOnly && !this.misako.owners.includes(user.id))
             return [false,'This command is owner-only.'];
         if (this.permissions && this.permissions.length > 0) {
             for (const perm of this.permissions) {

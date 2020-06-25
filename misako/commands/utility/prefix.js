@@ -4,19 +4,19 @@ class PrefixCommand extends Command {
     constructor(Client) {
         super(Client, {
             name: 'prefix',
-            aliases: ['?'],
-            description: 'Lists all commands or help with a specific command.',
+            aliases: [],
+            description: 'Changes the bot\'s prefix.',
             group: 'utility',
             nsfw: false,
-            throttle: 0,
-            examples: ['help', 'help prefix'],
-            ownerOnly: false,
+            throttle: 10,
+            examples: ['prefix ?'],
+            ownerOnly: true,
             canDM: true,
             args: [
                 {
-                    key: 'command-name',
+                    key: 'new-prefix',
                     type: 'string',
-                    required: false,
+                    required: true,
                     repeatable: false
                 }
             ]
@@ -25,7 +25,16 @@ class PrefixCommand extends Command {
     };
 
     async run(misako, msg, arg) {
-        
+      if (arg.length > 1) { 
+        msg.channel.sendEmbed('The prefix can only be one character. Please try the command again.');
+        return;
+      }
+      try {
+        misako.prefix = arg;
+      } catch(e) {
+        msg.channel.sendEmbed('There was an error setting the prefix. My apologies.');
+        console.log(e);
+      };
     };
 };
 

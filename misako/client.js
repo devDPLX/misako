@@ -217,7 +217,7 @@ class Misako extends Discord.Client {
         //--
         let isValid = _command.canRunCommand(msg);
         if (isValid[0] == false) {
-            msg.reply(isValid[1]);
+            msg.channel.sendEmbed(isValid[1]);
             return;
         };
         //--
