@@ -224,7 +224,12 @@ class Misako extends Discord.Client {
         if (msg.author.bot) return;
         if (msg.author.equals(this.user)) { return; };
         if (msg.channel.type == 'dm' && !msg.content.startsWith(this.prefix)) { return; };
-        if (msg.channel.type == 'text' && !msg.content.startsWith(this.settings.get(msg.guild.id,'prefix'))) { return; }; 
+        if (msg.channel.type == 'text') { 
+          this.settings.ensure(msg.guild.id,this.defaultSettings);
+          if (!msg.content.startsWith(this.settings.get(msg.guild.id,'prefix'))) {
+            return;
+          }
+        }
         let parsed = this.parseMessage(msg.content);
         let command = parsed[0];
         let args = parsed[1];
