@@ -1,5 +1,6 @@
 var Discord = require('discord.js');
 const path = require('path');
+const Enmap = require('enmap');
 const Command = require('./commands/base');
 const defaultPrefix = '?';
 
@@ -14,7 +15,23 @@ class Misako extends Discord.Client {
         this._prefix = null;
         this.owners = options.owners || [];
         this.prefix = options.prefix || defaultPrefix;
+        //--
+        this.settings = new Enmap({ 
+          name: 'settings',
+          //fetchAll: false,
+          autoFetch: true,
+          cloneLevel: 'deep'
+        });
 
+        this.defaultSettings = {
+          prefix: this.prefix
+        };
+
+        this.on('guildDelete', guild => { this.settings.delete(guild.id) });
+        this.on('guildCreate', guild => { 
+          this.settings.set(guild.id,defaultSettings)});
+
+          //--
         this.register(options.commandPath);
     };
 
@@ -205,8 +222,9 @@ class Misako extends Discord.Client {
 
     handleMessage(msg) {
         if (msg.author.bot) return;
-        if (!msg.content.startsWith(this.prefix)) return;
         if (msg.author.equals(this.user)) { return; };
+        if (msg.channel.type == 'dm' && !msg.content.startsWith(this.prefix)) { return; };
+        if (msg.channel.type == 'text' && !msg.content.startsWith(this.settings.get(msg.guild.id,'prefix'))) { return; }; 
         let parsed = this.parseMessage(msg.content);
         let command = parsed[0];
         let args = parsed[1];
