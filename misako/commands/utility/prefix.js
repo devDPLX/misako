@@ -10,8 +10,9 @@ class PrefixCommand extends Command {
             nsfw: false,
             throttle: 10,
             examples: ['prefix ?'],
-            ownerOnly: true,
-            canDM: true,
+            ownerOnly: false,
+            canDM: false,
+            permissions: ['ADMINISTRATOR'],
             args: [
                 {
                     key: 'new-prefix',
@@ -30,7 +31,10 @@ class PrefixCommand extends Command {
         return;
       }
       try {
+        misako.settings.ensure(msg.guild.id,misako.defaultSettings);
+        misako.settings.set(msg.guild.id,arg,'prefix');
         misako.prefix = arg;
+        msg.channel.sendEmbed('The prefix for this server has been successfully updated.');
       } catch(e) {
         msg.channel.sendEmbed('There was an error setting the prefix. My apologies.');
         console.log(e);
