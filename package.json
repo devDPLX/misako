@@ -1,12 +1,13 @@
 {
   "name": "misako",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "dependencies": {
     "better-sqlite3": "^7.1.0",
     "discord.js": "^12.2.0",
     "enmap": "^5.3.1",
+    "misako": "^1.0.0",
     "require-all": "^3.0.0",
     "sqlite3": "^4.2.0"
   },
