@@ -1,7 +1,7 @@
 const { Client, Command } = require('./misako');
 const { betaToken } = require('./config');
 const misako = new Client({
-    owners: [],
+    owners: ['153277301793095682'],
     commandPath: `${__dirname}/commands`
 });
 

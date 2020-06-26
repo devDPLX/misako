@@ -198,7 +198,7 @@ class Misako extends Discord.Client {
         if (!this.validate(folder,'object')) { return; }
         let types = [];
         for (const type of Object.values(folder)) {
-            if (typeof type == 'function' && type.name !== 'Type') {
+            if (typeof type == 'function' && type.name !== 'TypeBase') {
                 let _type = new type(this);
                 types.push(_type.name,_type);
             }
