@@ -1,11 +1,11 @@
-const Type = require('./base');
+const TypeBase = require('./base');
 
-class MemberType extends Type {
+class MemberType extends TypeBase {
     constructor(misako) {
         super(misako);
         this.name = 'member';
         this.misako = misako;
-    };
+    }
 
     parse(msg, value) {
         let misako = this.misako;
@@ -15,9 +15,9 @@ class MemberType extends Type {
         let regexMatch = value.match(/^(?:<@!?)?([0-9]+)>?$/);
         if (regexMatch) {
           return members.get(regexMatch[1]) || undefined;
-        };
+        }
         return undefined;
-    };
+    }
 }
 
 module.exports = MemberType;

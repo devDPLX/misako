@@ -4,13 +4,13 @@ module.exports = Structures.extend('DMChannel', DMChannel => {
   class ExtendedDMChannel extends DMChannel {
     constructor (misako, options) {
       super(misako,options);
-    };
+    }
 
     async sendEmbed(content, options = {}) {
       return new Promise((resolve,reject) => {
-        if (!content) { reject('Content not given.'); };
+        if (!content) { reject('Content not given.'); }
         content = String(content);
-        if (!content) { reject('Content was not valid type.'); };
+        if (!content) { reject('Content was not valid type.'); }
         let msgEmbed = new MessageEmbed({
           title: options.title || '**Misako**',
           description: content || 'No content was given for this field.',
@@ -23,8 +23,8 @@ module.exports = Structures.extend('DMChannel', DMChannel => {
         msgEmbed.setTimestamp();
         resolve(this.send(msgEmbed));
       });
-    };
-  };
+    }
+  }
 
   return ExtendedDMChannel;
 })

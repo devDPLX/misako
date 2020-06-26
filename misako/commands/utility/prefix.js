@@ -23,7 +23,7 @@ class PrefixCommand extends Command {
             ]
         });
 
-    };
+    }
 
     async run(misako, msg, arg) {
       if (arg.length > 1) { 
@@ -38,8 +38,8 @@ class PrefixCommand extends Command {
       } catch(e) {
         msg.channel.sendEmbed('There was an error setting the prefix. My apologies.');
         console.log(e);
-      };
-    };
-};
+      }
+    }
+}
 
 module.exports = PrefixCommand;

@@ -22,43 +22,13 @@ class TestCommand extends Command {
             ]
         });
 
-    };
-
-    /*async run(misako, msg) {
-        let channel = msg.channel;
-        let author = msg.author;
-        await msg.delete().catch(error => { console.log(error); });
-        let reactMsg = await channel.send(`${author.name}, Pick an emoji.`);
-        let guildEmojis = channel.guild.emojis.cache;
-        let reactEmojis = [];
-        guildEmojis.each(emoji => { reactEmojis.push(emoji.identifier); });
-        for (const reactEmoji of reactEmojis) {
-            await reactMsg.react(reactEmoji);
-        };
-        misako.promptReaction(author,channel,reactMsg,true)
-        .then(reaction => {
-            if (reactEmojis.includes(reaction.emoji.identifier)) {
-                channel.send(`${author.name}, You reacted with ${reaction.emoji.name}`);
-                reactMsg.delete().catch(error => {
-                  console.log(error);
-                });
-            } else {
-                channel.send(`That isn't a valid emoji.`);
-            };
-            reaction.users.remove(author);
-        })
-        .catch(error => {
-            if (error == 'time') {
-                channel.send('You didn\'t react in the time alloted.');
-            };
-        });
-    };*/
+    }
 
     async run(misako, msg) {
       let promptMsg = await misako.prompt(msg.author,msg.channel,'user');
       let msgEmbed = await msg.channel.sendEmbed(promptMsg.content);
       console.log(msgEmbed);
-    };
-};
+    }
+}
 
 module.exports = TestCommand;

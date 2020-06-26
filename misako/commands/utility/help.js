@@ -23,7 +23,7 @@ class HelpCommand extends Command {
             ]
         });
 
-    };
+    }
 
     async run(misako, msg, arg) {
         let commands = misako.commands;
@@ -57,33 +57,33 @@ class HelpCommand extends Command {
                   name: `**__${command.name} __**`,
                   value: _string
                 });
-            };
+            }
         } else {
             if (msg.channel.type == 'text') {
                 msgEmbed.setDescription(`**__List of commands you can perform in ${msg.guild.name}__**`);
             } else {
                 msgEmbed.setDescription(`**__List of commands you can perform in DMs__**`);
-            };
+            }
             for (const group of groups) {
                 let atleastOne = false;
                 let groupString = `**__${group}__**`;
                 let commandString = '';
                 commands.each(command => {
                     if (command.group == group && this.canRunCommand(msg)) {
-                        if (!atleastOne) { atleastOne = true; };
+                        if (!atleastOne) { atleastOne = true; }
                         commandString += `**${command.name}:** ${command.description}\n`;
-                    };
+                    }
                 });
                 if (atleastOne) { 
                   msgEmbed.addFields({
                     name: groupString,
                     value: commandString
                   });
-                };
-            };
-        };
+                }
+            }
+        }
         msg.channel.send(msgEmbed);
-    };
-};
+    }
+}
 
 module.exports = HelpCommand;

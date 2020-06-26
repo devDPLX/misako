@@ -1,11 +1,11 @@
-const Type = require('./base');
+const TypeBase = require('./base');
 
-class ChannelType extends Type {
+class ChannelType extends TypeBase {
     constructor(misako) {
         super(misako);
         this.name = 'channel';
         this.misako = misako;
-    };
+    }
 
     parse(msg, value) {
         let misako = this.misako;
@@ -15,9 +15,9 @@ class ChannelType extends Type {
         let regexMatch = value.match(/^(?:<#)?([0-9]+)>?$/);
         if (regexMatch) {
           return channels.get(regexMatch[1]) || undefined;
-        };
+        }
         return undefined;
-    };
+    }
 }
 
 module.exports = ChannelType;
