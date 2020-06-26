@@ -310,17 +310,13 @@ class Misako extends Discord.Client {
         if (value == undefined && !arg.required) {
           //lol
         } else if (arg.repeatable) {
-          let valueArray = [];
-          for (var _index in args) {
-            let _value = args[_index];
-            let parsedValue = arg.parse(msg, _value);
-            if (!parsedValue) {
-              channel.sendEmbed(`Argument at position **${_index}** should have been a(n) ${arg.type}. Please try your command again or use **${this.prefix}help ${_command.name}** for more detailed help with this command.`);
-              return;
-            }
-            valueArray.push(parsedValue);
+          let toParse = args.join(' ');
+          let parsedValue = arg.parse(msg, toParse);
+          if (!parsedValue) {
+            channel.sendEmbed(`Argument at position **${index}** should have been a(n) ${arg.type}. Please try your command again or use **${this.prefix}help ${_command.name}** for more detailed help with this command.`);
+            return;
           }
-          value = valueArray;
+          value = parsedValue;
         } else {
           let parsedValue = arg.parse(msg, value);
           if (!parsedValue) {
