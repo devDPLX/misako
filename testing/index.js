@@ -1,6 +1,6 @@
 const { Client } = require('../src');
 const Enmap = require('enmap');
-const misako = new Client({
+var misako = new Client({
   commandPath: `${__dirname}/commands`
 });
 //--
@@ -23,6 +23,7 @@ misako.on('ready', () => {
     });
     channel.sendEmbed('React to this message with one of the given emotes and you\'ll be given a role corresponding to that emote.').then( roleMsg => { 
       misako.roleMsgs.push(roleMsg);
+      console.log('roleMsgs.length:',misako.roleMsgs.length);
       let filteredRoles = registeredRoles.filter(role => role.guild == roleMsg.guild.id);
       filteredRoles.every(role => {
         roleMsg.react(role.emoji).catch(error => {
@@ -38,9 +39,8 @@ misako.on('ready', () => {
       let reactUsers = _reaction.users;
       reactUsers.remove(user.id);
     });
-    let roleMsg = misako.roleMsgs.find(_msg => { 
-      return _msg.equals(msg);
-    });
+    console.log('roleMsgs.length:',misako.roleMsgs.length);
+    let roleMsg = misako.roleMsgs.find(_msg => _msg.equals(msg));
     if (!roleMsg) return;
     let roleID = registeredRoles.findKey(_role => _role.emoji == reaction.emoji.id);
     console.log(roleID);
@@ -71,12 +71,6 @@ misako.on('ready', () => {
       console.log(error);
     });
   });
-  misako.on('messageDelete', msg => {
-    let roleMsgIndex = misako.roleMsgs.findIndex(_msg => _msg.equals(msg))
-    if (roleMsgIndex) {
-      misako.roleMsgs.splice(roleMsgIndex,1);
-    }
-  });
 });
 misako.on('message', msg => misako.handleMessage(msg));
 //--
@@ -86,4 +80,4 @@ misako.registeredRoles = new Enmap({
 });
 
 //--
-misako.login('NDU3MzExMjY5MzU2MTc1MzYw.XvYu4Q.KqHnqUTszbRbcj8rrQk4LTZDcE4');
+misako.login('NDU3MzExMjY5MzU2MTc1MzYw.XvbB8g.wwKkrgKPrrTYcgZ2cgjyc1YfpSo');
