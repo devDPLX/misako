@@ -31,8 +31,9 @@ class Misako extends Discord.Client {
       this.settings.delete(guild.id)
     });
     this.on('guildCreate', guild => {
-      this.settings.set(guild.id, defaultSettings)
+      this.settings.set(guild.id, this.defaultSettings)
     });
+    this.on('message', msg => this.handleMessage(msg));
 
     //--
     this.register(options.commandPath);
