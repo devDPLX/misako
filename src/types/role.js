@@ -8,7 +8,6 @@ class RoleType extends TypeBase {
   }
 
   parse(msg, value) {
-    console.log(value);
     let regexMatch = value.match(/^(?:<@&)?([0-9]+)>?$/);
     if (regexMatch) {
       return msg.guild.roles.cache.get(regexMatch[1]);
