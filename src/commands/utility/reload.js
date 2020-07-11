@@ -13,7 +13,7 @@ class ReloadCommand extends Command {
       ownerOnly: true,
       canDM: true,
       args: [{
-        key: 'command-name',
+        key: 'commandName',
         type: 'string',
         required: true,
         repeatable: false
@@ -22,8 +22,8 @@ class ReloadCommand extends Command {
 
   }
 
-  async run(misako, msg, arg) {
-    let command = misako.fetchCommand(arg);
+  async run(misako, msg, { commandName }) {
+    let command = misako.fetchCommand(commandName);
     if (!command) {
       msg.channel.sendEmbed(`That command doesn't exist. Try using **${misako.prefix}help** for a list of all commands.`);
     }

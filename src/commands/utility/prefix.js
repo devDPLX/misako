@@ -14,7 +14,7 @@ class PrefixCommand extends Command {
       canDM: false,
       permissions: ['ADMINISTRATOR'],
       args: [{
-        key: 'new-prefix',
+        key: 'newPrefix',
         type: 'string',
         required: true,
         repeatable: false
@@ -23,15 +23,15 @@ class PrefixCommand extends Command {
 
   }
 
-  async run(misako, msg, arg) {
-    if (arg.length > 1) {
+  async run(misako, msg, { newPrefix }) {
+    if (newPrefix.length > 1) {
       msg.channel.sendEmbed('The prefix can only be one character. Please try the command again.');
       return;
     }
     try {
       misako.settings.ensure(msg.guild.id, misako.defaultSettings);
-      misako.settings.set(msg.guild.id, arg, 'prefix');
-      misako.prefix = arg;
+      misako.settings.set(msg.guild.id, newPrefix, 'prefix');
+      misako.prefix = newPrefix;
       msg.channel.sendEmbed('The prefix for this server has been successfully updated.');
     } catch (e) {
       msg.channel.sendEmbed('There was an error setting the prefix. My apologies.');

@@ -299,7 +299,7 @@ class Misako extends Discord.Client {
       }
     }
     //--
-    var parsedArgs = [];
+    var parsedArgs = {};
     if (_command.args && _command.args.length > 0) {
       for (const index in _command.args) {
         let arg = _command.args[index];
@@ -327,11 +327,14 @@ class Misako extends Discord.Client {
           value = parsedValue;
           args.shift();
         }
-        parsedArgs.push(value);
+        Object.defineProperty(parsedArgs, arg.key, {
+          value: value,
+          enumerable: true
+        })
       }
-      if (_command.args.length == 1) {
+      /* if (_command.args.length == 1) {
         parsedArgs = parsedArgs[0];
-      }
+      } */
       _command.run(this, msg, parsedArgs);
     } else {
       _command.run(this, msg);

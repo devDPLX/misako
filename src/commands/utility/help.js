@@ -14,7 +14,7 @@ class HelpCommand extends Command {
       ownerOnly: false,
       canDM: true,
       args: [{
-        key: 'command-name',
+        key: 'commandName',
         type: 'string',
         required: false,
         repeatable: false
@@ -23,7 +23,7 @@ class HelpCommand extends Command {
 
   }
 
-  async run(misako, msg, arg) {
+  async run(misako, msg, { commandName }) {
     let commands = misako.commands;
     let groups = misako.groups;
     let channel = msg.channel;
@@ -37,8 +37,8 @@ class HelpCommand extends Command {
       color: '#0099ff'
     });
     //--
-    if (arg !== undefined) {
-      let command = misako.fetchCommand(arg);
+    if (commandName !== undefined) {
+      let command = misako.fetchCommand(commandName);
       let _string = '';
       if (!command) {
         channel.sendEmbed(`No command by that name exists. You can use **${misako.prefix}help** to get a list of all the commands I can perform for you.`);

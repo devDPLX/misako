@@ -10,24 +10,22 @@ class TestCommand extends Command {
       nsfw: false,
       throttle: 5,
       examples: ['test #general'],
-      ownerOnly: true,
+      ownerOnly: false,
       canDM: false,
       args: [
-        /*{
+        {
             key: 'username',
             type: 'user',
             required: true,
             repeatable: false
-        }*/
+        }
       ]
     });
 
   }
 
-  async run(misako, msg) {
-    let promptMsg = await misako.prompt(msg.author, msg.channel, 'user');
-    let msgEmbed = await msg.channel.sendEmbed(promptMsg.content);
-    console.log(msgEmbed);
+  async run(misako, msg, { username }) {
+    console.log(username);
   }
 }
 

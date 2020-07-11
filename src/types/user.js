@@ -8,7 +8,7 @@ class UserType extends TypeBase {
   }
 
   parse(msg, value) {
-    let misako = this.misako;
+    let misako = msg.client;
     let users = misako.users.cache;
     //--
     let regexMatch = value.match(/^(?:<@!?)?([0-9]+)>?$/);
