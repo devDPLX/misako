@@ -8,7 +8,6 @@ class MemberType extends TypeBase {
   }
 
   parse(msg, value) {
-    let misako = this.misako;
     let guild = msg.guild;
     let members = guild.members.cache;
     //--

@@ -15,6 +15,7 @@ class Misako extends Discord.Client {
     this._prefix = null;
     this.owners = options.owners || [];
     this.prefix = options.prefix || defaultPrefix;
+    this.commandPath = options.commandPath;
     //--
     this.settings = new Enmap({
       name: 'settings',
@@ -151,11 +152,7 @@ class Misako extends Discord.Client {
       this.commands.find(_command => _command.aliases.includes(command));
   }
 
-  fetchCommandPath(command) {
-    return path.join(__dirname, '/commands', command.group, command.name);
-  }
-
-  registerCommand(command) {
+  registerCommand(command, commandPath) {
     if (!this.validate(command, 'function')) {
       throw new TypeError('Command must be a function.');
     }
@@ -172,7 +169,7 @@ class Misako extends Discord.Client {
       }
     }
     //--
-    _command.path = this.fetchCommandPath(_command);
+    _command.path = path.join(commandPath,_command.group,_command.name);
     if (_command.args) {
       let args = _command.args;
       for (const arg of args) {
@@ -188,13 +185,13 @@ class Misako extends Discord.Client {
     this.commands.set(_command.name, _command);
   }
 
-  registerCommands(commands) {
+  registerCommands(commands, commandPath) {
     if (!this.validate(commands, 'array')) {
       throw new TypeError('Commands must be an Array.');
     }
     for (let command of commands) {
       if (this.validate(command, 'function') || command instanceof Command) {
-        this.registerCommand(command);
+        this.registerCommand(command, commandPath);
       } else {
         console.log(`Tried to register invalid command.`);
       }
@@ -282,7 +279,7 @@ class Misako extends Discord.Client {
     //--
     let isValid = _command.canRunCommand(msg);
     if (isValid[0] == false) {
-      msg.channel.sendEmbed(isValid[1]);
+      channel.sendEmbed(isValid[1]);
       return;
     }
     //--
@@ -332,9 +329,6 @@ class Misako extends Discord.Client {
           enumerable: true
         })
       }
-      /* if (_command.args.length == 1) {
-        parsedArgs = parsedArgs[0];
-      } */
       _command.run(this, msg, parsedArgs);
     } else {
       _command.run(this, msg);
@@ -356,13 +350,13 @@ class Misako extends Discord.Client {
 
   --/*/
 
-  register(path) {
+  register(commandPath) {
     this.registerTypes();
     this.registerExtensions();
-    this.registerCommands(this.fetchCommandsIn(`${__dirname}/commands`));
-    if (path) {
+    this.registerCommands(this.fetchCommandsIn(`${__dirname}/commands`),`${__dirname}/commands`);
+    if (commandPath) {
       try {
-        this.registerCommands(this.fetchCommandsIn(path));
+        this.registerCommands(this.fetchCommandsIn(commandPath),commandPath);
       } catch(error) {
         console.log(error);
       }

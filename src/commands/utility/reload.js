@@ -32,7 +32,7 @@ class ReloadCommand extends Command {
       misako.commands.delete(command.name);
       delete require.cache[require.resolve(commandPath)];
       let newCommand = require(commandPath);
-      misako.registerCommand(newCommand);
+      misako.registerCommand(newCommand,commandPath);
       msg.channel.sendEmbed('Command successfully reloaded.');
     } catch (e) {
       msg.channel.sendEmbed('There was an error trying to reload that command. My apologies.');

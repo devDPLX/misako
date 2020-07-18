@@ -8,7 +8,6 @@ class ChannelType extends TypeBase {
   }
 
   parse(msg, value) {
-    let misako = this.misako;
     let guild = msg.guild;
     let channels = guild.channels.cache;
     //--
