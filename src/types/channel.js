@@ -15,7 +15,12 @@ class ChannelType extends TypeBase {
     if (regexMatch) {
       return channels.get(regexMatch[1]) || undefined;
     }
-    return undefined;
+    value = value.toLowerCase();
+    let search = msg.guild.channels.cache.filter(channel => { 
+      return channel.name.toLowerCase() == value
+    });
+    if (!search.size) return undefined;
+    return search.first();
   }
 }
 

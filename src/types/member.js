@@ -15,7 +15,12 @@ class MemberType extends TypeBase {
     if (regexMatch) {
       return members.get(regexMatch[1]) || undefined;
     }
-    return undefined;
+    value = value.toLowerCase();
+    let search = msg.guild.members.cache.filter(member => { 
+      return member.displayName.toLowerCase() == value || member.user.username.toLowerCase() == value;
+    });
+    if (!search.size) return undefined;
+    return search.first();
   }
 }
 

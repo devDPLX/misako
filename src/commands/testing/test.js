@@ -14,8 +14,8 @@ class TestCommand extends Command {
       canDM: false,
       args: [
         {
-            key: 'username',
-            type: 'user',
+            key: 'channelName',
+            type: 'role',
             required: true,
             repeatable: false
         }
@@ -24,8 +24,8 @@ class TestCommand extends Command {
 
   }
 
-  async run(misako, msg, { username }) {
-    console.log(username);
+  async run(misako, msg, { channelName }) {
+    console.log(channelName);
   }
 }
 
